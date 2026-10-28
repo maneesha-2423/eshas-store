@@ -1,0 +1,64 @@
+
+{% extends "base.html" %}
+{% block title %}Shopping Bag | Eesha's Store{% endblock %}
+
+{% block content %}
+<section class="container section-space">
+    <p class="eyebrow">YOUR SELECTION</p>
+    <h1 class="page-title">Shopping bag</h1>
+
+    {% if items %}
+    <div class="row g-4 mt-2">
+        <div class="col-lg-8">
+            {% for item in items %}
+            <article class="cart-item">
+                <a href="{{ url_for('products.detail', product_id=item.product.id) }}">
+                    <img src="{{ item.product.image or 'https://placehold.co/200x250?text=Product' }}" alt="{{ item.product.name }}" class="cart-image">
+                </a>
+
+                <div class="cart-item-details">
+                    <p class="product-brand">{{ item.product.brand }}</p>
+                    <h3><a href="{{ url_for('products.detail', product_id=item.product.id) }}">{{ item.product.name }}</a></h3>
+                    <p>Size: {{ item.selected_size }}</p>
+                    <p>Price: ₹{{ "%.2f"|format(item.product.final_price) }} each</p>
+
+                    <form action="{{ url_for('cart.update', item_id=item.id) }}" method="post" class="d-flex gap-2 align-items-center flex-wrap">
+                        <label for="quantity-{{ item.id }}">Qty</label>
+                        <input id="quantity-{{ item.id }}" type="number" name="quantity" min="1"
+                               max="{{ [item.product.stock, 10]|min }}" value="{{ item.quantity }}" class="form-control quantity-input">
+                        <button class="btn btn-outline-dark btn-sm" type="submit">Update</button>
+                    </form>
+
+                    <form action="{{ url_for('cart.remove', item_id=item.id) }}" method="post" class="mt-2">
+                        <button type="submit" class="btn btn-link text-danger p-0">Remove item</button>
+                    </form>
+                </div>
+
+                <strong class="cart-line-total">₹{{ "%.2f"|format(item.product.final_price * item.quantity) }}</strong>
+            </article>
+            {% endfor %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="summary-card">
+                <h2>Order summary</h2>
+                <div class="summary-line"><span>Items subtotal</span><strong>₹{{ "%.2f"|format(subtotal) }}</strong></div>
+                <div class="summary-line"><span>You save</span><strong class="text-success">₹{{ "%.2f"|format(savings) }}</strong></div>
+                <hr>
+                <div class="summary-line total-line"><span>Total</span><strong>₹{{ "%.2f"|format(subtotal) }}</strong></div>
+                <p class="small text-muted mt-3">Delivery charges, if applicable, will be shown before you place your order.</p>
+                <a href="{{ url_for('orders.checkout') }}" class="btn btn-dark btn-lg w-100">Proceed to checkout →</a>
+                <a href="{{ url_for('products.shop') }}" class="btn btn-outline-dark w-100 mt-2">Continue shopping</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state mt-4">
+        <div class="empty-icon">♡</div>
+        <h2>Your bag is waiting</h2>
+        <p>You haven't added anything yet. Explore the collection to find something you love.</p>
+        <a href="{{ url_for('products.shop') }}" class="btn btn-dark">Start shopping</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

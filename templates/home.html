@@ -1,0 +1,128 @@
+
+{% extends "base.html" %}
+{% block title %}Shop Collection | Eesha's Store{% endblock %}
+
+{% block content %}
+<section class="container section-space">
+    <div class="shop-heading">
+        <p class="eyebrow">THE EESHA EDIT</p>
+        <h1>{% if selected_category %}{{ selected_category }} Collection{% else %}Find your next favourite{% endif %}</h1>
+        <p>Discover styles that make every day feel special.</p>
+    </div>
+
+    <form action="{{ url_for('products.shop') }}" method="get" class="filter-panel mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="q" class="form-label">Search products</label>
+                <input id="q" class="form-control" type="search" name="q" value="{{ keyword }}" placeholder="Search name or brand">
+            </div>
+            <div class="col-md-2">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" name="category" class="form-select">
+                    <option value="">All categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="min_price" class="form-label">Min ₹</label>
+                <input id="min_price" type="number" min="0" name="min_price" class="form-control" value="{{ filters.min_price }}">
+            </div>
+            <div class="col-md-2">
+                <label for="max_price" class="form-label">Max ₹</label>
+                <input id="max_price" type="number" min="0" name="max_price" class="form-control" value="{{ filters.max_price }}">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-dark w-100" type="submit">Apply filters</button>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" for="brand">Brand</label>
+                <select id="brand" name="brand" class="form-select">
+                    <option value="">All brands</option>
+                    {% for item_brand in brands %}
+                    <option value="{{ item_brand }}" {% if filters.brand == item_brand %}selected{% endif %}>{{ item_brand }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="size">Size</label>
+                <input id="size" name="size" class="form-control" value="{{ filters.size }}" placeholder="e.g. M or Free Size">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="rating">Minimum rating</label>
+                <select id="rating" name="rating" class="form-select">
+                    <option value="">Any rating</option>
+                    {% for r in [3, 3.5, 4, 4.5] %}
+                    <option value="{{ r }}" {% if filters.rating|string == r|string %}selected{% endif %}>{{ r }}+ stars</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label" for="sort">Sort by</label>
+                <select id="sort" name="sort" class="form-select">
+                    <option value="popular" {% if sort == 'popular' %}selected{% endif %}>Most popular</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: low to high</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: high to low</option>
+                    <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+                </select>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <p class="text-muted mb-0">{{ products|length }} product(s) found</p>
+        <a href="{{ url_for('products.shop') }}" class="text-link">Clear filters</a>
+    </div>
+
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <article class="product-card h-100">
+                <div class="product-image-wrap">
+                    <a href="{{ url_for('products.detail', product_id=product.id) }}">
+                        <img src="{{ product.image or 'https://placehold.co/600x750?text=Eesha+Store' }}"
+                             alt="{{ product.name }}" class="product-image" loading="lazy">
+                    </a>
+                    {% if product.discount > 0 %}
+                    <span class="discount-badge">{{ product.discount }}% OFF</span>
+                    {% endif %}
+
+                    {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('wishlist.toggle', product_id=product.id) }}" method="post" class="wishlist-float">
+                        <button type="submit" aria-label="Add or remove {{ product.name }} from wishlist">♡</button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                <div class="product-info">
+                    <p class="product-brand">{{ product.brand }}</p>
+                    <a class="product-name" href="{{ url_for('products.detail', product_id=product.id) }}">{{ product.name }}</a>
+                    <p class="product-rating">★ {{ product.rating }}</p>
+                    <div class="price-row">
+                        <strong>₹{{ "%.2f"|format(product.final_price) }}</strong>
+                        {% if product.discount > 0 %}
+                        <del>₹{{ "%.2f"|format(product.price) }}</del>
+                        {% endif %}
+                    </div>
+                    {% if product.stock > 0 %}
+                    <a class="btn btn-outline-dark btn-sm w-100 mt-3" href="{{ url_for('products.detail', product_id=product.id) }}">View product</a>
+                    {% else %}
+                    <button class="btn btn-secondary btn-sm w-100 mt-3" disabled>Out of stock</button>
+                    {% endif %}
+                </div>
+            </article>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="empty-state">
+                <h3>No products found</h3>
+                <p>Try another search or clear your filters.</p>
+                <a href="{{ url_for('products.shop') }}" class="btn btn-dark">Browse all products</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

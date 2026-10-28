@@ -1,0 +1,109 @@
+
+{% extends "base.html" %}
+{% block title %}Style Match | Eesha's Store{% endblock %}
+
+{% block content %}
+<section class="container section-space">
+    <div class="shop-heading">
+        <p class="eyebrow">YOUR PERSONAL STYLE STUDIO</p>
+        <h1>Build your perfect look.</h1>
+        <p>Choose a top, a bottom and a jewellery piece. We'll check how well the combination works together.</p>
+    </div>
+
+    <form method="post" class="form-card mt-4">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <label for="top_id" class="form-label">1. Choose a top</label>
+                <select name="top_id" id="top_id" class="form-select" required>
+                    <option value="">Select a top</option>
+                    {% for product in tops %}
+                    <option value="{{ product.id }}">
+                        {{ product.name }} — ₹{{ "%.2f"|format(product.final_price) }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if not tops %}
+                <small class="text-muted">No top products found. Add products with a subcategory containing "top".</small>
+                {% endif %}
+            </div>
+
+            <div class="col-md-4">
+                <label for="bottom_id" class="form-label">2. Choose a bottom</label>
+                <select name="bottom_id" id="bottom_id" class="form-select" required>
+                    <option value="">Select a bottom</option>
+                    {% for product in bottoms %}
+                    <option value="{{ product.id }}">
+                        {{ product.name }} — ₹{{ "%.2f"|format(product.final_price) }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if not bottoms %}
+                <small class="text-muted">No bottom products found. Add products with a subcategory containing "bottom".</small>
+                {% endif %}
+            </div>
+
+            <div class="col-md-4">
+                <label for="jewellery_id" class="form-label">3. Choose jewellery</label>
+                <select name="jewellery_id" id="jewellery_id" class="form-select" required>
+                    <option value="">Select jewellery</option>
+                    {% for product in jewellery %}
+                    <option value="{{ product.id }}">
+                        {{ product.name }} — ₹{{ "%.2f"|format(product.final_price) }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if not jewellery %}
+                <small class="text-muted">No jewellery products found. Add products in the Jewellery category.</small>
+                {% endif %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-dark btn-lg mt-4">Check my outfit →</button>
+    </form>
+
+    {% if result %}
+        {% if result.error %}
+        <div class="alert alert-warning mt-4">{{ result.error }}</div>
+        {% else %}
+        <section class="match-result mt-5">
+            <p class="eyebrow">YOUR STYLE REPORT</p>
+            <h2>{{ result.verdict }}</h2>
+
+            <div class="match-score">
+                <strong>{{ result.score }}%</strong>
+                <span>Style compatibility</span>
+            </div>
+
+            <div class="progress mt-3" role="progressbar" aria-label="Style compatibility score"
+                 aria-valuenow="{{ result.score }}" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" style="width: {{ result.score }}%"></div>
+            </div>
+
+            <p class="mt-4">{{ result.reason }}</p>
+
+            <div class="row g-4 mt-2">
+                {% for label, product in [
+                    ('Your top', result.top),
+                    ('Your bottom', result.bottom),
+                    ('Your jewellery', result.jewellery)
+                ] %}
+                <div class="col-6 col-md-4">
+                    <article class="product-card h-100">
+                        <img src="{{ product.image or 'https://placehold.co/600x750?text=Product' }}"
+                             alt="{{ product.name }}" class="product-image">
+                        <div class="product-info">
+                            <p class="product-brand">{{ label }}</p>
+                            <a class="product-name" href="{{ url_for('products.detail', product_id=product.id) }}">{{ product.name }}</a>
+                            <strong class="d-block mt-2">₹{{ "%.2f"|format(product.final_price) }}</strong>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+
+            <a href="{{ url_for('products.shop') }}" class="btn btn-outline-dark mt-4">Explore more styles</a>
+        </section>
+        {% endif %}
+    {% endif %}
+</section>
+{% endblock %}

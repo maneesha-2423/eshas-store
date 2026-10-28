@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+{% block title %}Eesha's Store | Find Your Style{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <p class="eyebrow">THE NEW STYLE EDIT</p>
+                <h1 class="hero-title">Wear your story.<br><em>Own your style.</em></h1>
+                <p class="hero-description">Explore timeless fashion, beautiful accessories and jewellery that makes every moment special.</p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <a href="{{ url_for('products.shop') }}" class="btn btn-dark btn-lg">Explore collection →</a>
+                    <a href="{{ url_for('outfit.outfit') }}" class="btn btn-outline-dark btn-lg">Find my style</a>
+                </div>
+                <div class="hero-stats mt-5">
+                    <div><strong>Everyday</strong><span>Fashion</span></div>
+                    <div><strong>Every mood</strong><span>Personal style</span></div>
+                    <div><strong>Every moment</strong><span>Jewellery</span></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image-wrap">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1100&q=85"
+                         alt="Fashion collection" class="hero-image">
+                    <div class="hero-note">
+                        <span>THE STYLE NOTE</span>
+                        <strong>Simple pieces.<br>Endless possibilities.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container section-space">
+    <div class="section-heading">
+        <div><p class="eyebrow">SHOP YOUR WAY</p><h2>Made for every you</h2></div>
+        <a href="{{ url_for('products.shop') }}" class="text-link">View all products →</a>
+    </div>
+
+    <div class="row g-3 category-grid">
+        {% set category_data = [
+            ('Women', 'Fashion for her', 'photo-1483985988355-763728e1935b'),
+            ('Men', 'Everyday essentials', 'photo-1515886657613-9f3515b0c78f'),
+            ('Kids', 'Little style moments', 'photo-1503919005314-30d93d07d823'),
+            ('Jewellery', 'The finishing touch', 'photo-1611652022419-a9419f74343d')
+        ] %}
+        {% for category_name, subtitle, image_id in category_data %}
+        <div class="col-6 col-lg-3">
+            <a href="{{ url_for('products.category', category=category_name) }}" class="category-card">
+                <img src="https://images.unsplash.com/{{ image_id }}?auto=format&fit=crop&w=650&q=80" alt="{{ category_name }} collection">
+                <div class="category-overlay">
+                    <span>{{ subtitle }}</span>
+                    <h3>{{ category_name }}</h3>
+                    <span>Explore collection →</span>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="style-banner">
+    <div class="container py-5 text-center">
+        <p class="eyebrow">YOUR PERSONAL STYLE ASSISTANT</p>
+        <h2>Not sure what goes together?</h2>
+        <p>Mix a top, a bottom and jewellery to discover a look you love.</p>
+        <a href="{{ url_for('outfit.outfit') }}" class="btn btn-dark mt-2">Create an outfit →</a>
+    </div>
+</section>
+{% endblock %}

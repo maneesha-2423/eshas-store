@@ -1,0 +1,79 @@
+
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | Eesha's Store{% endblock %}
+
+{% block content %}
+<section class="container section-space">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <a href="{{ url_for('products.shop') }}">Shop</a>
+        <span class="text-muted"> / {{ product.category }} / {{ product.name }}</span>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-md-6">
+            <div class="detail-image-wrap">
+                <img src="{{ product.image or 'https://placehold.co/700x850?text=Eesha+Store' }}"
+                     alt="{{ product.name }}" class="detail-image">
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <p class="eyebrow">{{ product.brand }}</p>
+            <h1 class="detail-title">{{ product.name }}</h1>
+            <p class="product-rating">★ {{ product.rating }} <span class="text-muted">customer rating</span></p>
+
+            <div class="price-row detail-price">
+                <strong>₹{{ "%.2f"|format(product.final_price) }}</strong>
+                {% if product.discount > 0 %}
+                <del>₹{{ "%.2f"|format(product.price) }}</del>
+                <span class="discount-text">{{ product.discount }}% off</span>
+                {% endif %}
+            </div>
+
+            <p class="mt-4">{{ product.description }}</p>
+
+            <div class="product-meta mt-4">
+                <p><strong>Category:</strong> {{ product.category }} / {{ product.subcategory }}</p>
+                <p><strong>Colour:</strong> {{ product.colour }}</p>
+                <p><strong>Occasion:</strong> {{ product.occasion }}</p>
+                <p><strong>Available stock:</strong>
+                    {% if product.stock > 0 %}{{ product.stock }}{% else %}Out of stock{% endif %}
+                </p>
+            </div>
+
+            {% if product.stock > 0 %}
+            <form action="{{ url_for('cart.add', product_id=product.id) }}" method="post" class="mt-4">
+                <label class="form-label" for="size">Choose size</label>
+                <select class="form-select mb-3" name="size" id="size" required>
+                    {% for size in product.size_list %}
+                    <option value="{{ size }}">{{ size }}</option>
+                    {% endfor %}
+                </select>
+
+                <label class="form-label" for="quantity">Quantity</label>
+                <input class="form-control mb-3" type="number" name="quantity" id="quantity"
+                       value="1" min="1" max="{{ [product.stock, 10]|min }}" required>
+
+                <button class="btn btn-dark btn-lg w-100" type="submit">Add to bag</button>
+            </form>
+            {% else %}
+            <button class="btn btn-secondary btn-lg w-100 mt-4" disabled>Currently unavailable</button>
+            {% endif %}
+
+            {% if current_user.is_authenticated %}
+            <form action="{{ url_for('wishlist.toggle', product_id=product.id) }}" method="post" class="mt-3">
+                <button type="submit" class="btn btn-outline-dark w-100">♡ Save to wishlist</button>
+            </form>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-dark w-100 mt-3">Login to save favourites</a>
+            {% endif %}
+
+            <div class="detail-promise mt-4">
+                <p>✓ Secure account access</p>
+                <p>✓ Clear pricing before checkout</p>
+                <p>✓ Cash on Delivery available</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

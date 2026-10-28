@@ -1,0 +1,14 @@
+
+{% extends "base.html" %}
+{% block title %}{{ category }} | Eesha's Store{% endblock %}
+
+{% block content %}
+<section class="container section-space">
+    <div class="shop-heading">
+        <p class="eyebrow">EXPLORE THE COLLECTION</p>
+        <h1>{{ category }}</h1>
+        <p>Find your favourites from our {{ category|lower }} collection.</p>
+        <a href="{{ url_for('products.shop', category=category) }}" class="btn btn-dark mt-3">Shop {{ category }}</a>
+    </div>
+</section>
+{% endblock %}

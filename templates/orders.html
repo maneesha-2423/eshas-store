@@ -1,0 +1,54 @@
+
+{% extends "base.html" %}
+{% block title %}My Orders | Eesha's Store{% endblock %}
+
+{% block content %}
+<section class="container section-space">
+    <p class="eyebrow">YOUR PURCHASES</p>
+    <h1 class="page-title">My orders</h1>
+
+    {% for order in orders %}
+    <article class="order-card mt-4">
+        <div class="order-header">
+            <div>
+                <p class="product-brand mb-1">ORDER #{{ order.id }}</p>
+                <h3>{{ order.created_at.strftime('%d %b %Y') }}</h3>
+            </div>
+            <span class="order-status">{{ order.status }}</span>
+        </div>
+
+        <hr>
+
+        {% for item in order.items %}
+        <div class="checkout-product">
+            <div class="order-product-placeholder">ES</div>
+            <div>
+                <strong>{{ item.product_name }}</strong>
+                <p class="small text-muted mb-1">Size: {{ item.selected_size }} · Qty: {{ item.quantity }}</p>
+                <span>₹{{ "%.2f"|format(item.price * item.quantity) }}</span>
+            </div>
+        </div>
+        {% endfor %}
+
+        <hr>
+
+        <div class="order-footer">
+            <div>
+                <span class="text-muted">Payment</span>
+                <p class="mb-0">{{ order.payment_method }}</p>
+            </div>
+            <div class="text-end">
+                <span class="text-muted">Order total</span>
+                <h3>₹{{ "%.2f"|format(order.total_amount) }}</h3>
+            </div>
+        </div>
+    </article>
+    {% else %}
+    <div class="empty-state mt-4">
+        <h2>No orders yet</h2>
+        <p>Your purchases will appear here after you place your first order.</p>
+        <a href="{{ url_for('products.shop') }}" class="btn btn-dark">Explore the store</a>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

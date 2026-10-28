@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+{% block title %}Login | Eesha's Store{% endblock %}
+
+{% block content %}
+<section class="auth-section container">
+    <div class="auth-card">
+        <p class="eyebrow text-center">WELCOME BACK</p>
+        <h1 class="text-center">Good to see you.</h1>
+        <p class="text-center text-muted mb-4">Log in to continue your style journey.</p>
+
+        <form method="post">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" id="email" name="email" class="form-control" autocomplete="email" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" autocomplete="current-password" required>
+            </div>
+
+            <button type="submit" class="btn btn-dark btn-lg w-100">Login</button>
+        </form>
+
+        <p class="text-center mt-4 mb-0">
+            New to Eesha's Store?
+            <a href="{{ url_for('auth.register') }}">Create an account</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

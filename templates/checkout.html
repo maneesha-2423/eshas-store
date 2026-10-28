@@ -1,0 +1,78 @@
+
+{% extends "base.html" %}
+{% block title %}Checkout | Eesha's Store{% endblock %}
+
+{% block content %}
+<section class="container section-space">
+    <p class="eyebrow">ALMOST YOURS</p>
+    <h1 class="page-title">Checkout</h1>
+
+    <form method="post" class="row g-4 mt-2">
+        <div class="col-lg-7">
+            <div class="form-card">
+                <h2>Delivery details</h2>
+
+                <div class="mb-3">
+                    <label for="full_name" class="form-label">Full name</label>
+                    <input type="text" id="full_name" name="full_name" class="form-control" autocomplete="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone number</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" autocomplete="tel" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="address" class="form-label">House number and street address</label>
+                    <textarea id="address" name="address" class="form-control" rows="3" autocomplete="street-address" required></textarea>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="city" class="form-label">City</label>
+                        <input id="city" name="city" class="form-control" autocomplete="address-level2" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="state" class="form-label">State</label>
+                        <input id="state" name="state" class="form-control" autocomplete="address-level1" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="postal_code" class="form-label">6-digit PIN code</label>
+                        <input id="postal_code" name="postal_code" class="form-control" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="postal-code" required>
+                    </div>
+                </div>
+
+                <h2 class="mt-4">Payment method</h2>
+                <label class="payment-option">
+                    <input type="radio" name="payment_method" value="COD" checked>
+                    <span><strong>Cash on Delivery</strong><br><small>Pay when your order arrives.</small></span>
+                </label>
+
+                <button type="submit" class="btn btn-dark btn-lg w-100 mt-4">Place order · ₹{{ "%.2f"|format(total) }}</button>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="summary-card">
+                <h2>Your order</h2>
+                {% for item in items %}
+                <div class="checkout-product">
+                    <img src="{{ item.product.image or 'https://placehold.co/100x120?text=Product' }}" alt="{{ item.product.name }}">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <p class="small text-muted mb-1">Size: {{ item.selected_size }} · Qty: {{ item.quantity }}</p>
+                        <strong>₹{{ "%.2f"|format(item.product.final_price * item.quantity) }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+                <hr>
+                <div class="summary-line total-line">
+                    <span>Order total</span>
+                    <strong>₹{{ "%.2f"|format(total) }}</strong>
+                </div>
+                <p class="small text-muted mt-3">Please verify your delivery details before placing the order.</p>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}
